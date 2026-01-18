@@ -15,6 +15,7 @@ use malloc_size_of_derive::MallocSizeOf;
 use mime::Mime;
 use parking_lot::Mutex;
 use rustc_hash::FxHashMap;
+use rustc_hash::FxHashSet;
 use serde::{Deserialize, Serialize};
 use servo_url::{ImmutableOrigin, ServoUrl};
 use tokio::sync::oneshot::Sender as TokioSender;
@@ -199,6 +200,7 @@ impl PreloadEntry {
 }
 
 pub type PreloadedResources = FxHashMap<PreloadKey, PreloadId>;
+pub type UpgradeInsecureRequests = FxHashSet<(String, u16)>;
 
 /// <https://fetch.spec.whatwg.org/#concept-request-client>
 #[derive(Clone, Debug, Deserialize, MallocSizeOf, Serialize)]
@@ -213,6 +215,8 @@ pub struct RequestClient {
     pub is_nested_browsing_context: bool,
     /// <https://w3c.github.io/webappsec-upgrade-insecure-requests/#insecure-requests-policy>
     pub insecure_requests_policy: InsecureRequestsPolicy,
+
+    pub upgrade_insecure_requests: UpgradeInsecureRequests,
 }
 
 /// <https://html.spec.whatwg.org/multipage/#system-visibility-state>

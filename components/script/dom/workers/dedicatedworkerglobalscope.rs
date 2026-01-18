@@ -20,7 +20,7 @@ use net_traits::image_cache::ImageCache;
 use net_traits::policy_container::{PolicyContainer, RequestPolicyContainer};
 use net_traits::request::{
     CredentialsMode, Destination, InsecureRequestsPolicy, Origin, ParserMetadata,
-    PreloadedResources, Referrer, RequestBuilder, RequestClient, RequestMode,
+    PreloadedResources, Referrer, RequestBuilder, RequestClient, RequestMode, UpgradeInsecureRequests,
 };
 use servo_url::{ImmutableOrigin, ServoUrl};
 use style::thread_state::{self, ThreadState};
@@ -394,6 +394,7 @@ impl DedicatedWorkerGlobalScope {
                     origin: Origin::Origin(origin.clone()),
                     is_nested_browsing_context,
                     insecure_requests_policy,
+                    upgrade_insecure_requests: UpgradeInsecureRequests::default(),
                 };
 
                 let request = RequestBuilder::new(Some(webview_id), worker_url.clone(), referrer)

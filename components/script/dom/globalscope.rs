@@ -59,7 +59,7 @@ use net_traits::filemanager_thread::{
 use net_traits::image_cache::ImageCache;
 use net_traits::policy_container::{PolicyContainer, RequestPolicyContainer};
 use net_traits::request::{
-    InsecureRequestsPolicy, Origin as RequestOrigin, Referrer, RequestBuilder, RequestClient,
+    InsecureRequestsPolicy, Origin as RequestOrigin, Referrer, RequestBuilder, RequestClient, UpgradeInsecureRequests,
 };
 use net_traits::response::HttpsState;
 use net_traits::{
@@ -424,6 +424,8 @@ pub(crate) struct GlobalScope {
     /// <https://fetch.spec.whatwg.org/#environment-settings-object-fetch-group>
     #[no_trace]
     fetch_group: RefCell<FetchGroup>,
+
+    upgrade_insecure_requests: DomRefCell<UpgradeInsecureRequests>,
 }
 
 /// A wrapper for glue-code between the ipc router and the event-loop.
@@ -836,6 +838,7 @@ impl GlobalScope {
             resolved_module_set: Default::default(),
             font_context,
             fetch_group: Default::default(),
+            upgrade_insecure_requests: Default::default(),
         }
     }
 
@@ -2640,6 +2643,7 @@ impl GlobalScope {
             origin: RequestOrigin::Origin(self.origin().immutable().clone()),
             is_nested_browsing_context,
             insecure_requests_policy: self.insecure_requests_policy(),
+            upgrade_insecure_requests: self.upgrade_insecure_requests(),
         }
     }
 
@@ -2648,7 +2652,7 @@ impl GlobalScope {
         if let Some(window) = self.downcast::<Window>() {
             return window.Document().policy_container().to_owned();
         }
-        if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
+    if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
             return worker.policy_container().to_owned();
         }
         unreachable!();
@@ -2764,6 +2768,10 @@ impl GlobalScope {
         }
         debug!("unsupported global, defaulting insecure requests policy to DoNotUpgrade");
         InsecureRequestsPolicy::DoNotUpgrade
+    }
+
+    pub(crate) fn upgrade_insecure_requests(&self) -> UpgradeInsecureRequests {
+        self.upgrade_insecure_requests.borrow_mut().clone()
     }
 
     /// Whether this document has ancestor navigables that are trustworthy
