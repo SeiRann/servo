@@ -21,6 +21,7 @@ use net_traits::request::{
     RequestBuilder, RequestClient, RequestMode,
 };
 use net_traits::response::ResponseInit;
+use net_traits::request::UpgradeInsecureRequests;
 use net_traits::{
     BoxedFetchCallback, CoreResourceThread, DOCUMENT_ACCEPT_HEADER_VALUE, FetchResponseMsg,
     Metadata, fetch_async, set_default_accept_language,
@@ -210,6 +211,7 @@ impl InProgressLoad {
             origin: Origin::Origin(self.origin.immutable().clone()),
             is_nested_browsing_context: self.parent_info.is_some(),
             insecure_requests_policy,
+            upgrade_insecure_requests: UpgradeInsecureRequests::default(),
         };
 
         let mut request_builder = RequestBuilder::new(
