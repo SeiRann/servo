@@ -29,7 +29,7 @@ use http::{HeaderMap, Method};
 use ipc_channel::ipc::IpcSender;
 use malloc_size_of_derive::MallocSizeOf;
 use net_traits::policy_container::PolicyContainer;
-use net_traits::request::{Destination, InsecureRequestsPolicy, Referrer, RequestBody};
+use net_traits::request::{Destination, InsecureRequestsPolicy, Referrer, RequestBody, UpgradeInsecureRequests};
 use net_traits::{ReferrerPolicy, ResourceThreads};
 use profile_traits::mem::MemoryReportResult;
 use profile_traits::{mem, time as profile_time};
@@ -131,6 +131,8 @@ pub struct LoadData {
     /// If this is a load operation for an `<iframe>` whose origin is same-origin with its
     /// container documents origin then this is the encoding of the container document.
     pub container_document_encoding: Option<&'static Encoding>,
+
+    pub upgrade_insecure_requests: UpgradeInsecureRequests,
 }
 
 /// The result of evaluating a javascript scheme url.
@@ -156,6 +158,7 @@ impl LoadData {
         inherited_insecure_requests_policy: Option<InsecureRequestsPolicy>,
         has_trustworthy_ancestor_origin: bool,
         creation_sandboxing_flag_set: SandboxingFlagSet,
+        upgrade_insecure_requests: UpgradeInsecureRequests,
     ) -> Self {
         Self {
             load_origin,
@@ -176,6 +179,7 @@ impl LoadData {
             destination: Destination::Document,
             creation_sandboxing_flag_set,
             container_document_encoding: None,
+            upgrade_insecure_requests,
         }
     }
 
@@ -192,6 +196,7 @@ impl LoadData {
             None,
             false,
             SandboxingFlagSet::empty(),
+            UpgradeInsecureRequests::default(),
         )
     }
 }
