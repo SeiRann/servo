@@ -272,6 +272,7 @@ impl HTMLIFrameElement {
             let document = self.owner_document();
             let window = self.owner_window();
             let pipeline_id = Some(window.pipeline_id());
+            let upgrade_insecure_requests = window.as_global_scope().upgrade_insecure_requests();
             let mut load_data = LoadData::new(
                 LoadOrigin::Script(document.origin().immutable().clone()),
                 url,
@@ -282,6 +283,7 @@ impl HTMLIFrameElement {
                 Some(document.insecure_requests_policy()),
                 document.has_trustworthy_ancestor_or_current_origin(),
                 self.sandboxing_flag_set(),
+                upgrade_insecure_requests,
             );
             load_data.destination = Destination::IFrame;
             load_data.policy_container = Some(window.as_global_scope().policy_container());
@@ -368,6 +370,7 @@ impl HTMLIFrameElement {
         };
 
         let propagate_encoding_to_child_document = url.origin().same_origin(window.origin());
+        let upgrade_insecure_requests = window.as_global_scope().upgrade_insecure_requests();
         let mut load_data = LoadData::new(
             LoadOrigin::Script(document.origin().immutable().clone()),
             url,
@@ -378,6 +381,7 @@ impl HTMLIFrameElement {
             Some(document.insecure_requests_policy()),
             document.has_trustworthy_ancestor_or_current_origin(),
             self.sandboxing_flag_set(),
+            upgrade_insecure_requests,
         );
         load_data.destination = Destination::IFrame;
         load_data.policy_container = Some(window.as_global_scope().policy_container());
@@ -412,6 +416,7 @@ impl HTMLIFrameElement {
         let document = self.owner_document();
         let window = self.owner_window();
         let pipeline_id = Some(window.pipeline_id());
+        let upgrade_insecure_requests = window.as_global_scope().upgrade_insecure_requests();
         let mut load_data = LoadData::new(
             LoadOrigin::Script(document.origin().immutable().clone()),
             url,
@@ -422,6 +427,7 @@ impl HTMLIFrameElement {
             Some(document.insecure_requests_policy()),
             document.has_trustworthy_ancestor_or_current_origin(),
             self.sandboxing_flag_set(),
+            upgrade_insecure_requests,
         );
         load_data.destination = Destination::IFrame;
         load_data.policy_container = Some(window.as_global_scope().policy_container());
