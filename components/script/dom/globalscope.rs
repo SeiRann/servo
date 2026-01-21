@@ -2771,8 +2771,13 @@ impl GlobalScope {
     }
 
     pub(crate) fn upgrade_insecure_requests(&self) -> UpgradeInsecureRequests {
+        self.upgrade_insecure_requests.borrow().clone()
+    }
+
+    pub(crate) fn upgrade_insecure_requests_mut(&self) -> UpgradeInsecureRequests {
         self.upgrade_insecure_requests.borrow_mut().clone()
     }
+
 
     /// Whether this document has ancestor navigables that are trustworthy
     pub(crate) fn has_trustworthy_ancestor_origin(&self) -> bool {
