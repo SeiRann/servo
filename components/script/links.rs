@@ -435,6 +435,7 @@ pub(crate) fn follow_hyperlink(
         //          userInvolvement, and sourceElement set to subject.
         let pipeline_id = target_window.as_global_scope().pipeline_id();
         let secure = target_window.as_global_scope().is_secure_context();
+        let upgarde_insecure_requests = target_window.as_global_scope().upgrade_insecure_requests();
         let load_data = LoadData::new(
             LoadOrigin::Script(document.origin().immutable().clone()),
             url,
@@ -445,6 +446,7 @@ pub(crate) fn follow_hyperlink(
             Some(document.insecure_requests_policy()),
             document.has_trustworthy_ancestor_origin(),
             document.creation_sandboxing_flag_set_considering_parent_iframe(),
+            upgarde_insecure_requests,
         );
         let target = Trusted::new(target_window);
         let task = task!(navigate_follow_hyperlink: move |cx| {
