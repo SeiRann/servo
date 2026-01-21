@@ -89,6 +89,8 @@ impl Location {
         } else {
             Some(incumbent_global.is_secure_context())
         };
+
+        let upgrade_insecure_requests = navigable.as_global_scope().upgrade_insecure_requests();
         let load_data = LoadData::new(
             LoadOrigin::Script(incumbent_window.origin().immutable().clone()),
             url,
@@ -99,6 +101,7 @@ impl Location {
             Some(source_document.insecure_requests_policy()),
             source_document.has_trustworthy_ancestor_origin(),
             source_document.creation_sandboxing_flag_set_considering_parent_iframe(),
+            upgrade_insecure_requests,
         );
         navigable.load_url(history_handling, false, load_data, can_gc);
     }
@@ -164,6 +167,8 @@ impl Location {
 
         // Initiate navigation
         // TODO: rethrow exceptions, set exceptions enabled flag.
+        let upgrade_insecure_requests = source_window.as_global_scope().upgrade_insecure_requests();
+
         let load_data = LoadData::new(
             LoadOrigin::Script(load_origin),
             url,
@@ -174,6 +179,7 @@ impl Location {
             Some(source_document.insecure_requests_policy()),
             source_document.has_trustworthy_ancestor_origin(),
             source_document.creation_sandboxing_flag_set_considering_parent_iframe(),
+            upgrade_insecure_requests,
         );
         self.window
             .load_url(history_handling, reload_triggered, load_data, can_gc);
