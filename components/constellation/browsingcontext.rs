@@ -5,6 +5,7 @@
 use base::id::{BrowsingContextGroupId, BrowsingContextId, PipelineId, WebViewId};
 use embedder_traits::ViewportDetails;
 use log::warn;
+use net_traits::request::UpgradeInsecureRequests;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 use crate::pipeline::Pipeline;
@@ -71,6 +72,8 @@ pub struct BrowsingContext {
     /// All the pipelines that have been presented or will be presented in
     /// this browsing context.
     pub pipelines: FxHashSet<PipelineId>,
+
+    pub upgrade_insecure_requests: UpgradeInsecureRequests,
 }
 
 impl BrowsingContext {
@@ -87,9 +90,11 @@ impl BrowsingContext {
         is_private: bool,
         inherited_secure_context: Option<bool>,
         throttled: bool,
+        upgrade_insecure_requests: UpgradeInsecureRequests,
     ) -> BrowsingContext {
         let mut pipelines = FxHashSet::default();
         pipelines.insert(pipeline_id);
+
         BrowsingContext {
             bc_group_id,
             id,
@@ -101,6 +106,7 @@ impl BrowsingContext {
             pipeline_id,
             parent_pipeline_id,
             pipelines,
+            upgrade_insecure_requests,
         }
     }
 
