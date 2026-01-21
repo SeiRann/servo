@@ -871,6 +871,7 @@ impl HTMLFormElement {
         };
         // Step 21
         let target_window = target_document.window();
+        let upgrade_insecure_requests = target_window.as_global_scope().upgrade_insecure_requests();
         let mut load_data = LoadData::new(
             LoadOrigin::Script(doc.origin().immutable().clone()),
             action_components,
@@ -881,6 +882,7 @@ impl HTMLFormElement {
             Some(target_document.insecure_requests_policy()),
             target_document.has_trustworthy_ancestor_origin(),
             target_document.creation_sandboxing_flag_set_considering_parent_iframe(),
+            upgrade_insecure_requests,
         );
 
         // Step 22
