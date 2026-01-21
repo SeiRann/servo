@@ -313,6 +313,7 @@ impl WindowProxy {
             .and_then(ScriptThread::find_document)
             .expect("A WindowProxy creating an auxiliary to have an active document");
         let blank_url = ServoUrl::parse("about:blank").ok().unwrap();
+        let upgrade_insecure_requests = window.as_global_scope().upgrade_insecure_requests();
         let load_data = LoadData::new(
             LoadOrigin::Script(document.origin().immutable().clone()),
             blank_url,
@@ -326,6 +327,7 @@ impl WindowProxy {
             false,
             // There are no sandboxing restrictions when creating auxiliary browsing contexts.
             SandboxingFlagSet::empty(),
+            upgrade_insecure_requests,
         );
         let load_info = AuxiliaryWebViewCreationRequest {
             load_data: load_data.clone(),
@@ -557,6 +559,7 @@ impl WindowProxy {
             // Step 15.5 Otherwise, navigate targetNavigable to urlRecord using sourceDocument,
             // with referrerPolicy set to referrerPolicy and exceptionsEnabled set to true.
             // FIXME: referrerPolicy may not be used properly here. exceptionsEnabled not used.
+            let upgrade_insecure_requests = target_window.as_global_scope().upgrade_insecure_requests();
             let mut load_data = LoadData::new(
                 LoadOrigin::Script(existing_document.origin().immutable().clone()),
                 url,
@@ -567,6 +570,7 @@ impl WindowProxy {
                 Some(target_document.insecure_requests_policy()),
                 has_trustworthy_ancestor_origin,
                 target_document.creation_sandboxing_flag_set_considering_parent_iframe(),
+                upgrade_insecure_requests,
             );
 
             // Handle javascript: URLs specially to report CSP violations to the source window
